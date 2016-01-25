@@ -12,17 +12,16 @@ clc
 
 % Define parameters
 k = 2.5; % [W/mK]
-kappa = 1e-6;
+kappa = 1e-6; % [m^2/sec]
 rhoCp = k/kappa;
 Qm = 45/1000; % [W/m^2]
 
 % Set boundary conditions
-Pyr = 3600*24*365.25; 
-Pday = 86400;
-dT_yr = 15;
-dT_day = 0;
-%dT_day = 10;
-mT_yr = -10;
+Pyr = 3600*24*365.25; % pne year [sec]
+Pday = 86400; % one day [sec]
+dT_yr = 15; % variation in temperature per year [deg C]
+dT_day = 10; % variation in temperature per day [deg C]
+mT_yr = -10; % mean yearly temperature [deg C]
 
 % Set initial conditions
 dz = 0.25;
@@ -30,7 +29,6 @@ zmax = 10*sqrt(kappa*Pyr/pi); % ten characteristic depths so gradient at depth i
 z = 0:dz:zmax;
 Ts = mT_yr;
 T = (Qm./k).*z + Ts(1); % start simulation with linear T(z) from mantle
-%T = mT_yr*ones(size(z));
 
 % Define time vector
 dt = 0.75*(dz^2/(2*kappa)); % 0.75 gives margin from what is req'd for stability
@@ -46,6 +44,8 @@ zStar_day = sqrt(kappa*Pday/pi);
 boundLow = T - dT_yr.*exp(-z./zStar_yr) - dT_day.*exp(-z./zStar_day);
 boundHigh = T + dT_yr.*exp(-z./zStar_yr) + dT_day.*exp(-z./zStar_day);
 
+
+%% Set initial temperature profile
 T = T + ...
         dT_yr.*exp(-z./zStar_yr).*sin(((2*pi*(0))/Pyr) - (z./zStar_yr)) + ...
         dT_day.*exp(-z./zStar_day).*sin(((2*pi*(0))/Pday) - (z./zStar_day));
